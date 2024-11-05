@@ -5,8 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -56,11 +56,11 @@ export class UsersService {
     this.users = newUsers;
   }
 
-  remove(id: string) {
-    const user = this.users.find((u) => u.id === id);
+  remove(userId: string) {
+    const user = this.findOne(userId);
 
     if (!user) throw new NotFoundException('User not found');
 
-    this.users = this.users.filter((u) => u.id !== id);
+    this.users = this.users.filter((u) => u.id !== userId);
   }
 }
