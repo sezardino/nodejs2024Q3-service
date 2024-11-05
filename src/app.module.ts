@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
-import { FavoritesModule } from './favorites/favorites.module';
-import { AlbumsModule } from './albums/albums.module';
-import { TracksModule } from './tracks/tracks.module';
-import { ArtistsModule } from './artists/artists.module';
+import { UsersModule } from './modules/users/users.module';
+import { FavoritesModule } from './modules/favorites/favorites.module';
+import { AlbumsModule } from './modules/albums/albums.module';
+import { TracksModule } from './modules/tracks/tracks.module';
+import { ArtistsModule } from './modules/artists/artists.module';
 
 @Module({
   imports: [
