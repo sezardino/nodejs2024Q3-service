@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
 
 @Controller('favorites')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
-  @Post()
-  create(@Body() createFavoriteDto: CreateFavoriteDto) {
-    return this.favoritesService.create(createFavoriteDto);
-  }
-
   @Get()
-  findAll() {
-    return this.favoritesService.findAll();
+  @HttpCode(200)
+  get() {
+    return this.favoritesService.get();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.favoritesService.findOne(+id);
+  @Post('track/:id')
+  @HttpCode(201)
+  addTrack(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favoritesService.addTrack(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFavoriteDto: UpdateFavoriteDto) {
-    return this.favoritesService.update(+id, updateFavoriteDto);
+  @Delete('track/:id')
+  @HttpCode(204)
+  deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favoritesService.deleteTrack(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.favoritesService.remove(+id);
+  @Post('album/:id')
+  @HttpCode(201)
+  addAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favoritesService.addAlbum(id);
+  }
+
+  @Delete('album/:id')
+  @HttpCode(204)
+  deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favoritesService.deleteAlbum(id);
+  }
+
+  @Post('artist/:id')
+  @HttpCode(201)
+  addArtist(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favoritesService.addArtist(id);
+  }
+
+  @Delete('artist/:id')
+  @HttpCode(204)
+  deleteArtist(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favoritesService.addArtist(id);
   }
 }

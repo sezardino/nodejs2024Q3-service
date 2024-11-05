@@ -1,26 +1,110 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { AlbumsService } from '../albums/albums.service';
+import { ArtistsService } from '../artists/artists.service';
+import { TracksService } from '../tracks/tracks.service';
+import { Favorite } from './entities/favorite.entity';
 
 @Injectable()
 export class FavoritesService {
-  create(createFavoriteDto: CreateFavoriteDto) {
-    return 'This action adds a new favorite';
+  private favorites = new Favorite();
+
+  constructor(
+    private readonly albumsService: AlbumsService,
+    private readonly artistsService: ArtistsService,
+    private readonly tracksService: TracksService,
+  ) {}
+
+  get() {
+    const tracks = this.tracksService
+      .findAll()
+      .filter((t) => this.favorites.tracks.includes(t.id))
+      .filter(Boolean);
+    const albums = this.albumsService
+      .findAll()
+      .filter((t) => this.favorites.albums.includes(t.id))
+      .filter(Boolean);
+    const artist = this.artistsService
+      .findAll()
+      .filter((t) => this.favorites.artists.includes(t.id))
+      .filter(Boolean);
+
+    return { tracks, albums, artist };
   }
 
-  findAll() {
-    return `This action returns all favorites`;
+  addTrack(trackId: string) {
+    this.tracksService.findOne(trackId, UnprocessableEntityException);
+
+    const inList = this.favorites.tracks.includes(trackId);
+
+    if (inList) throw new BadRequestException('Track already in list');
+
+    this.favorites = {
+      ...this.favorites,
+      tracks: [...this.favorites.tracks, trackId],
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} favorite`;
+  deleteTrack(trackId: string) {
+    const inList = this.favorites.tracks.includes(trackId);
+
+    if (!inList) throw new NotFoundException('Track not found');
+
+    this.favorites = {
+      ...this.favorites,
+      tracks: this.favorites.tracks.filter((t) => t !== trackId),
+    };
   }
 
-  update(id: number, updateFavoriteDto: UpdateFavoriteDto) {
-    return `This action updates a #${id} favorite`;
+  addAlbum(albumId: string) {
+    this.albumsService.findOne(albumId, UnprocessableEntityException);
+
+    const inList = this.favorites.tracks.includes(albumId);
+
+    if (inList) throw new BadRequestException('Album already in list');
+
+    this.favorites = {
+      ...this.favorites,
+      albums: [...this.favorites.tracks, albumId],
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} favorite`;
+  deleteAlbum(albumId: string) {
+    const inList = this.favorites.albums.includes(albumId);
+
+    if (!inList) throw new NotFoundException('Album not found');
+
+    this.favorites = {
+      ...this.favorites,
+      albums: this.favorites.tracks.filter((t) => t !== albumId),
+    };
+  }
+
+  addArtist(artistId: string) {
+    this.artistsService.findOne(artistId, UnprocessableEntityException);
+
+    const inList = this.favorites.tracks.includes(artistId);
+
+    if (inList) throw new BadRequestException('Artist already in list');
+
+    this.favorites = {
+      ...this.favorites,
+      artists: [...this.favorites.tracks, artistId],
+    };
+  }
+
+  deleteArtist(artistId: string) {
+    const inList = this.favorites.artists.includes(artistId);
+
+    if (!inList) throw new NotFoundException('Track not found');
+
+    this.favorites = {
+      ...this.favorites,
+      artists: this.favorites.artists.filter((t) => t !== artistId),
+    };
   }
 }

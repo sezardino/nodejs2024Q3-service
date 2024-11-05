@@ -19,10 +19,10 @@ export class ArtistsService {
     return this.artists;
   }
 
-  findOne(artistId: string) {
+  findOne(artistId: string, exception = NotFoundException) {
     const artist = this.artists.find((a) => a.id === artistId);
 
-    if (!artist) throw new NotFoundException('Artist not found');
+    if (!artist) throw new exception('Artist not found');
 
     return artist;
   }

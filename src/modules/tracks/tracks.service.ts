@@ -19,10 +19,10 @@ export class TracksService {
     return this.tracks;
   }
 
-  findOne(trackId: string) {
+  findOne(trackId: string, exception = NotFoundException) {
     const track = this.tracks.find((t) => t.id === trackId);
 
-    if (!track) throw new NotFoundException('Track not found');
+    if (!track) throw new exception('Track not found');
 
     return track;
   }

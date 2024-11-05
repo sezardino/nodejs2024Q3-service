@@ -19,10 +19,10 @@ export class AlbumsService {
     return this.albums;
   }
 
-  findOne(albumId: string) {
+  findOne(albumId: string, exception = NotFoundException) {
     const album = this.albums.find((t) => t.id === albumId);
 
-    if (!album) throw new NotFoundException('Album not found');
+    if (!album) throw new exception('Album not found');
 
     return album;
   }

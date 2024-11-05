@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -17,26 +18,31 @@ export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
   @Post()
+  @HttpCode(201)
   create(@Body() dto: CreateAlbumDto) {
     return this.albumsService.create(dto);
   }
 
   @Get()
+  @HttpCode(200)
   findAll() {
     return this.albumsService.findAll();
   }
 
   @Get(':id')
+  @HttpCode(200)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.albumsService.findOne(id);
   }
 
   @Patch(':id')
+  @HttpCode(200)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateAlbumDto) {
     return this.albumsService.update(id, dto);
   }
 
   @Delete(':id')
+  @HttpCode(204)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.albumsService.remove(id);
   }
