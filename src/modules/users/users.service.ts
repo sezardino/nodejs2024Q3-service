@@ -18,14 +18,16 @@ export class UsersService {
     if (isUserExist)
       throw new BadRequestException('User with this login already exist');
 
-    const newUser = new User(dto.login, dto.password);
+    const newUser = new User(dto);
     this.users = [...this.users, newUser];
 
-    return newUser;
+    const { password, ...restUser } = newUser;
+
+    return restUser;
   }
 
   findAll() {
-    return this.users;
+    return this.users.map(({ password, ...restUser }) => ({ ...restUser }));
   }
 
   findOne(id: string) {
@@ -33,7 +35,9 @@ export class UsersService {
 
     if (!user) return new NotFoundException('User not found');
 
-    return user;
+    const { password, ...restUser } = user;
+
+    return restUser;
   }
 
   updatePassword(userId: string, dto: UpdateUserPasswordDto) {

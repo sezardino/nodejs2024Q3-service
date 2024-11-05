@@ -1,3 +1,5 @@
+import { CreateUserDto } from '../dto/create-user.dto';
+
 export class User {
   id: string; // uuid v4
   login: string;
@@ -6,9 +8,9 @@ export class User {
   createdAt: number; // timestamp of creation
   updatedAt: number; // timestamp of last update
 
-  constructor(login: string, password: string) {
-    this.login = login;
-    this.password = password;
+  constructor(dto: CreateUserDto) {
+    this.login = dto.login;
+    this.password = dto.password;
     this.id = crypto.randomUUID();
     this.version = 0;
     this.createdAt = Date.now();
