@@ -33,7 +33,7 @@ export class UsersService {
   findOne(id: string) {
     const user = this.users.find((u) => u.id === id);
 
-    if (!user) return new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('User not found');
 
     const { password, ...restUser } = user;
 
@@ -57,9 +57,7 @@ export class UsersService {
   }
 
   remove(userId: string) {
-    const user = this.findOne(userId);
-
-    if (!user) throw new NotFoundException('User not found');
+    this.findOne(userId);
 
     this.users = this.users.filter((u) => u.id !== userId);
   }
