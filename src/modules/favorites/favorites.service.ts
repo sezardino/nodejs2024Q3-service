@@ -8,11 +8,14 @@ import { AlbumsService } from '../albums/albums.service';
 import { ArtistsService } from '../artists/artists.service';
 import { TracksService } from '../tracks/tracks.service';
 import { Favorite } from './entities/favorite.entity';
-import { MOCK_FAVORITES } from './favorites.const';
 
 @Injectable()
 export class FavoritesService {
-  private favorites: Favorite = MOCK_FAVORITES;
+  private favorites: Favorite = {
+    albums: [],
+    artists: [],
+    tracks: [],
+  };
 
   constructor(
     private readonly albumsService: AlbumsService,
@@ -29,12 +32,12 @@ export class FavoritesService {
       .findAll()
       .filter((t) => this.favorites.albums.includes(t.id))
       .filter(Boolean);
-    const artist = this.artistsService
+    const artists = this.artistsService
       .findAll()
       .filter((t) => this.favorites.artists.includes(t.id))
       .filter(Boolean);
 
-    return { tracks, albums, artist };
+    return { tracks, albums, artists };
   }
 
   addTrack(trackId: string) {
@@ -64,13 +67,13 @@ export class FavoritesService {
   addAlbum(albumId: string) {
     this.albumsService.findOne(albumId, UnprocessableEntityException);
 
-    const inList = this.favorites.tracks.includes(albumId);
+    const inList = this.favorites.albums.includes(albumId);
 
     if (inList) throw new BadRequestException('Album already in list');
 
     this.favorites = {
       ...this.favorites,
-      albums: [...this.favorites.tracks, albumId],
+      albums: [...this.favorites.albums, albumId],
     };
   }
 
@@ -81,20 +84,20 @@ export class FavoritesService {
 
     this.favorites = {
       ...this.favorites,
-      albums: this.favorites.tracks.filter((t) => t !== albumId),
+      albums: this.favorites.albums.filter((t) => t !== albumId),
     };
   }
 
   addArtist(artistId: string) {
     this.artistsService.findOne(artistId, UnprocessableEntityException);
 
-    const inList = this.favorites.tracks.includes(artistId);
+    const inList = this.favorites.artists.includes(artistId);
 
     if (inList) throw new BadRequestException('Artist already in list');
 
     this.favorites = {
       ...this.favorites,
-      artists: [...this.favorites.tracks, artistId],
+      artists: [...this.favorites.artists, artistId],
     };
   }
 

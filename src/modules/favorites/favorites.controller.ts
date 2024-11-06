@@ -52,6 +52,6 @@ export class FavoritesController {
   @Delete('artist/:id')
   @HttpCode(204)
   deleteArtist(@Param('id', ParseUUIDPipe) id: string) {
-    return this.favoritesService.addArtist(id);
+    return this.favoritesService.deleteArtist(id);
   }
 }
