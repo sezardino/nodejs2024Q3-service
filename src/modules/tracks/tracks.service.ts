@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
+import { MOCK_TRACKS } from './tracks.const';
 
 @Injectable()
 export class TracksService {
-  private tracks: Track[] = [];
+  private tracks: Track[] = MOCK_TRACKS;
 
   create(dto: CreateTrackDto) {
     const newTrack = new Track(dto);
@@ -38,6 +39,24 @@ export class TracksService {
     ];
 
     return updatedTrack;
+  }
+
+  deleteAlbum(albumId: string) {
+    const updatedTracks = this.tracks.map((t) => ({
+      ...t,
+      albumId: t.albumId === albumId ? null : t.albumId,
+    }));
+
+    this.tracks = updatedTracks;
+  }
+
+  deleteArtist(artistId: string) {
+    const updatedTracks = this.tracks.map((t) => ({
+      ...t,
+      artistId: t.artistId === artistId ? null : t.artistId,
+    }));
+
+    this.tracks = updatedTracks;
   }
 
   remove(trackId: string) {

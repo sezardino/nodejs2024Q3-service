@@ -12,7 +12,7 @@ export class User {
     this.login = dto.login;
     this.password = dto.password;
     this.id = crypto.randomUUID();
-    this.version = 0;
+    this.version = 1;
     this.createdAt = Date.now();
     this.updatedAt = Date.now();
   }

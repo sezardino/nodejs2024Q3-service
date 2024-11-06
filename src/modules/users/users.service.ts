@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -7,16 +6,17 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { User } from './entities/user.entity';
+import { MOCK_USERS } from './users.const';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+  private users: User[] = MOCK_USERS;
 
   create(dto: CreateUserDto) {
-    const isUserExist = this.users.find((u) => u.login === dto.login);
+    // const isUserExist = this.users.find((u) => u.login === dto.login);
 
-    if (isUserExist)
-      throw new BadRequestException('User with this login already exist');
+    // if (isUserExist)
+    //   throw new BadRequestException('User with this login already exist');
 
     const newUser = new User(dto);
     this.users = [...this.users, newUser];
@@ -47,13 +47,22 @@ export class UsersService {
     if (user.password !== dto.oldPassword)
       throw new ForbiddenException('Wrong password');
 
-    const updatedUser: User = { ...user, password: dto.newPassword };
+    const updatedUser: User = {
+      ...user,
+      version: ++user.version,
+      updatedAt: Date.now(),
+      password: dto.newPassword,
+    };
 
     const newUsers = [
       ...this.users.filter((u) => u.id !== userId),
       updatedUser,
     ];
     this.users = newUsers;
+
+    const { password, ...restUpdatedUser } = updatedUser;
+
+    return restUpdatedUser;
   }
 
   remove(userId: string) {

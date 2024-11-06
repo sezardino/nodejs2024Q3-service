@@ -8,10 +8,11 @@ import { AlbumsService } from '../albums/albums.service';
 import { ArtistsService } from '../artists/artists.service';
 import { TracksService } from '../tracks/tracks.service';
 import { Favorite } from './entities/favorite.entity';
+import { MOCK_FAVORITES } from './favorites.const';
 
 @Injectable()
 export class FavoritesService {
-  private favorites = new Favorite();
+  private favorites: Favorite = MOCK_FAVORITES;
 
   constructor(
     private readonly albumsService: AlbumsService,

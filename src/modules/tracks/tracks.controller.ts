@@ -6,14 +6,14 @@ import {
   HttpCode,
   Param,
   ParseUUIDPipe,
-  Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { TracksService } from './tracks.service';
 
-@Controller('tracks')
+@Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
 
@@ -35,7 +35,7 @@ export class TracksController {
     return this.tracksService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @HttpCode(200)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateTrackDto) {
     return this.tracksService.update(id, dto);

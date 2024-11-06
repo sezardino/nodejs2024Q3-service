@@ -6,14 +6,14 @@ import {
   HttpCode,
   Param,
   ParseUUIDPipe,
-  Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
-@Controller('albums')
+@Controller('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
@@ -35,7 +35,7 @@ export class AlbumsController {
     return this.albumsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @HttpCode(200)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateAlbumDto) {
     return this.albumsService.update(id, dto);

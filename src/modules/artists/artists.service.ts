@@ -1,11 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { AlbumsService } from '../albums/albums.service';
+import { TracksService } from '../tracks/tracks.service';
+import { MOCK_ARTISTS } from './artists.const';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistsService {
-  private artists: Artist[] = [];
+  private artists: Artist[] = MOCK_ARTISTS;
+
+  constructor(
+    private readonly tracksService: TracksService,
+    private readonly albumService: AlbumsService,
+  ) {}
 
   create(dto: CreateArtistDto) {
     const newArtist = new Artist(dto);
@@ -44,5 +52,7 @@ export class ArtistsService {
     this.findOne(artistId);
 
     this.artists = this.artists.filter((a) => a.id !== artistId);
+    this.tracksService.deleteArtist(artistId);
+    this.albumService.deleteArtist(artistId);
   }
 }
