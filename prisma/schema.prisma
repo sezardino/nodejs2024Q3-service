@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  login    String @unique
+  password String
+  version  Int
+
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  Favorites Favorites[]
+
+  @@map("users")
+}
+
+model Favorites {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  albums  Album[]  @relation("user-favorite-album")
+  tracks  Track[]  @relation("user-favorite-track")
+  artists Artist[] @relation("user-favorite-artist")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Track {
+  id       String @id @default(uuid())
+  name     String
+  duration Int
+
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+
+  favorites Favorites[] @relation("user-favorite-track")
+
+  album   Album?  @relation(fields: [albumId], references: [id])
+  albumId String?
+
+  @@map("tracks")
+}
+
+model Album {
+  id   String @id @default(uuid())
+  name String
+  year Int
+
+  tracks Track[]
+
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+
+  favorites Favorites[] @relation("user-favorite-album")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("albums")
+}
+
+model Artist {
+  id     String  @id @default(uuid())
+  name   String
+  grammy Boolean
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  albums Album[]
+  tracks Track[]
+
+  favorites Favorites[] @relation("user-favorite-artist")
+
+  @@map("artists")
+}

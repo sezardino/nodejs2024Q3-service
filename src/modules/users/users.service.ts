@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { PrismaService } from 'src/common/prisma';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { User } from './entities/user.entity';
@@ -11,6 +12,8 @@ import { MOCK_USERS } from './users.const';
 @Injectable()
 export class UsersService {
   private users: User[] = MOCK_USERS;
+
+  constructor(private readonly prisma: PrismaService) {}
 
   create(dto: CreateUserDto) {
     // const isUserExist = this.users.find((u) => u.login === dto.login);
@@ -26,8 +29,8 @@ export class UsersService {
     return restUser;
   }
 
-  findAll() {
-    return this.users.map(({ password, ...restUser }) => ({ ...restUser }));
+  async findAll() {
+    return await this.prisma.user.findMany();
   }
 
   findOne(id: string) {
