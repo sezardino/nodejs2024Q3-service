@@ -1,44 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/common/prisma';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
-import { MOCK_TRACKS } from './tracks.const';
 
 @Injectable()
 export class TracksService {
-  private tracks: Track[] = MOCK_TRACKS;
+  tracks: Track[] = []
 
-  create(dto: CreateTrackDto) {
-    const newTrack = new Track(dto);
+  constructor(private readonly prisma: PrismaService) { }
 
-    this.tracks = [...this.tracks, newTrack];
 
-    return newTrack;
+  async create(dto: CreateTrackDto) {
+    return await this.prisma.track.create({
+      data: {
+        duration: dto.duration,
+        name: dto.name,
+        album: { connect: { id: dto.albumId } },
+        artist: { connect: { id: dto.artistId } },
+      }
+    })
   }
 
   findAll() {
-    return this.tracks;
+    return this.prisma.track.findMany();
   }
 
   findOne(trackId: string, exception = NotFoundException) {
-    const track = this.tracks.find((t) => t.id === trackId);
+
+    const track = this.prisma.track.findUnique({ where: { id: trackId } })
 
     if (!track) throw new exception('Track not found');
 
     return track;
   }
 
-  update(trackId: string, dto: UpdateTrackDto) {
-    const track = this.findOne(trackId);
+  async update(trackId: string, dto: UpdateTrackDto) {
 
-    const updatedTrack = { ...track, ...dto };
-
-    this.tracks = [
-      ...this.tracks.filter((t) => t.id !== trackId),
-      updatedTrack,
-    ];
-
-    return updatedTrack;
+    return await this.prisma.track.update({
+      where: { id: trackId }, data: {
+        duration: dto.duration,
+        name: dto.name,
+        album: { connect: { id: dto.albumId } },
+        artist: { connect: { id: dto.artistId } },
+      }
+    })
   }
 
   deleteAlbum(albumId: string) {
@@ -60,8 +66,6 @@ export class TracksService {
   }
 
   remove(trackId: string) {
-    this.findOne(trackId);
-
-    this.tracks = this.tracks.filter((t) => t.id !== trackId);
+    this.prisma.track.delete({ where: { id: trackId } })
   }
 }

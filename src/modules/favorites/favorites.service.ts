@@ -21,11 +21,11 @@ export class FavoritesService {
     private readonly albumsService: AlbumsService,
     private readonly artistsService: ArtistsService,
     private readonly tracksService: TracksService,
-  ) {}
+  ) { }
 
-  get() {
-    const tracks = this.tracksService
-      .findAll()
+  async get() {
+    const tracks = (await this.tracksService
+      .findAll())
       .filter((t) => this.favorites.tracks.includes(t.id))
       .filter(Boolean);
     const albums = this.albumsService
