@@ -12,9 +12,9 @@ export class AlbumsService {
       data: {
         name: dto.name,
         year: dto.year,
-        artist: { connect: { id: dto.artistId } }
-      }
-    })
+        artist: { connect: { id: dto.artistId } },
+      },
+    });
 
     return newAlbum;
   }
@@ -24,7 +24,9 @@ export class AlbumsService {
   }
 
   async findOne(albumId: string, exception = NotFoundException) {
-    const album = await this.prisma.album.findUnique({ where: { id: albumId } })
+    const album = await this.prisma.album.findUnique({
+      where: { id: albumId },
+    });
 
     if (!album) throw new exception('Album not found');
 
@@ -37,14 +39,14 @@ export class AlbumsService {
       data: {
         name: dto.name,
         year: dto.year,
-        artist: dto.artistId ? { connect: { id: dto.artistId } } : undefined
-      }
-    })
+        artist: dto.artistId ? { connect: { id: dto.artistId } } : undefined,
+      },
+    });
 
     return updatedAlbum;
   }
 
   remove(albumId: string) {
-    this.prisma.album.delete({ where: { id: albumId } })
+    this.prisma.album.delete({ where: { id: albumId } });
   }
 }

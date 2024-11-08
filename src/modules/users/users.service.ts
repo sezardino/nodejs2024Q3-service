@@ -16,16 +16,16 @@ export class UsersService {
       data: {
         login: dto.login,
         password: dto.password,
-        favorites: { create: {} }
+        favorites: { create: {} },
       },
       select: {
         id: true,
         login: true,
         createdAt: true,
         updatedAt: true,
-        version: true
-      }
-    })
+        version: true,
+      },
+    });
 
     return newUser;
   }
@@ -42,36 +42,41 @@ export class UsersService {
         login: true,
         createdAt: true,
         updatedAt: true,
-        version: true
-      }
-    })
+        version: true,
+      },
+    });
 
-    if (!user) throw new NotFoundException('User not found')
+    if (!user) throw new NotFoundException('User not found');
 
     return user;
   }
 
   async updatePassword(userId: string, dto: UpdateUserPasswordDto) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { password: true } })
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { password: true },
+    });
 
     if (!user) throw new NotFoundException('User not found');
     if (user.password !== dto.oldPassword)
       throw new ForbiddenException('Wrong password');
 
     const updatedUser = await this.prisma.user.update({
-      where: { id: userId }, data: { password: dto.newPassword, version: { increment: 1 } }, select: {
+      where: { id: userId },
+      data: { password: dto.newPassword, version: { increment: 1 } },
+      select: {
         id: true,
         login: true,
         createdAt: true,
         updatedAt: true,
-        version: true
-      }
-    })
+        version: true,
+      },
+    });
 
     return updatedUser;
   }
 
   async remove(userId: string) {
-    await this.prisma.user.delete({where: {id: userId}})
+    await this.prisma.user.delete({ where: { id: userId } });
   }
 }

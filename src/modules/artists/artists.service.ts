@@ -11,9 +11,9 @@ export class ArtistsService {
     return await this.prisma.artist.create({
       data: {
         name: dto.name,
-        grammy: dto.grammy
+        grammy: dto.grammy,
       },
-    })
+    });
   }
 
   async findAll() {
@@ -21,7 +21,9 @@ export class ArtistsService {
   }
 
   async findOne(artistId: string, exception = NotFoundException) {
-    const artist = await this.prisma.artist.findUnique({ where: { id: artistId } })
+    const artist = await this.prisma.artist.findUnique({
+      where: { id: artistId },
+    });
 
     if (!artist) throw new exception('Artist not found');
 
@@ -29,13 +31,15 @@ export class ArtistsService {
   }
 
   async update(artistId: string, dto: UpdateArtistDto) {
-    const updatedArtist = await this.prisma.artist.update({ where: { id: artistId }, data: { name: dto.name, grammy: dto.grammy } })
-
+    const updatedArtist = await this.prisma.artist.update({
+      where: { id: artistId },
+      data: { name: dto.name, grammy: dto.grammy },
+    });
 
     return updatedArtist;
   }
 
   remove(artistId: string) {
-    this.prisma.artist.delete({ where: { id: artistId } })
+    this.prisma.artist.delete({ where: { id: artistId } });
   }
 }

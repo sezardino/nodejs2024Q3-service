@@ -14,8 +14,8 @@ export class TracksService {
         name: dto.name,
         album: { connect: { id: dto.albumId } },
         artist: { connect: { id: dto.artistId } },
-      }
-    })
+      },
+    });
   }
 
   findAll() {
@@ -23,8 +23,7 @@ export class TracksService {
   }
 
   findOne(trackId: string, exception = NotFoundException) {
-
-    const track = this.prisma.track.findUnique({ where: { id: trackId } })
+    const track = this.prisma.track.findUnique({ where: { id: trackId } });
 
     if (!track) throw new exception('Track not found');
 
@@ -33,16 +32,17 @@ export class TracksService {
 
   async update(trackId: string, dto: UpdateTrackDto) {
     return await this.prisma.track.update({
-      where: { id: trackId }, data: {
+      where: { id: trackId },
+      data: {
         duration: dto.duration,
         name: dto.name,
         album: { connect: { id: dto.albumId } },
         artist: { connect: { id: dto.artistId } },
-      }
-    })
+      },
+    });
   }
 
   remove(trackId: string) {
-    this.prisma.track.delete({ where: { id: trackId } })
+    this.prisma.track.delete({ where: { id: trackId } });
   }
 }
