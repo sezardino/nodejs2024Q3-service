@@ -18,7 +18,7 @@ git clone https://github.com/sezardino/nodejs2024Q3-service.git
 cd nodejs2024Q3-service
 ```
 
-### 3. Checkout to correct branch
+### 2. Checkout to correct branch
 
 ```bash
 git checkout dev-part-2
