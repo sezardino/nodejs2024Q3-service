@@ -36,7 +36,6 @@ export class TracksService {
   }
 
   async update(trackId: string, dto: UpdateTrackDto) {
-
     return await this.prisma.track.update({
       where: { id: trackId }, data: {
         duration: dto.duration,
