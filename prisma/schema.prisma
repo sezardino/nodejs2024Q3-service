@@ -21,8 +21,8 @@ model User {
   password String
   version  Int    @default(1)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt Int @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::int")) @map("created_at")
+  updatedAt Int @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::int")) @map("updated_at")
 
   favorites   Favorites @relation(fields: [favoritesId], references: [id])
   favoritesId String
@@ -38,9 +38,6 @@ model Favorites {
   albums  Album[]  @relation("user-favorite-album")
   tracks  Track[]  @relation("user-favorite-track")
   artists Artist[] @relation("user-favorite-artist")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 model Track {
@@ -71,9 +68,6 @@ model Album {
 
   favorites Favorites[] @relation("user-favorite-album")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
   @@map("albums")
 }
 
@@ -81,9 +75,6 @@ model Artist {
   id     String  @id @default(uuid())
   name   String
   grammy Boolean
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
 
   albums Album[]
   tracks Track[]

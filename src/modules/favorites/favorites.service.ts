@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/common/prisma';
 
 @Injectable()
@@ -18,14 +19,24 @@ export class FavoritesService {
 
     const entityToAddConnection = { connect: { id } };
 
-    this.prisma.favorites.update({
-      where: { id: firstFavorite.id },
-      data: {
-        tracks: type === 'track' ? entityToAddConnection : undefined,
-        albums: type === 'album' ? entityToAddConnection : undefined,
-        artists: type === 'artist' ? entityToAddConnection : undefined,
-      },
-    });
+    try {
+      await this.prisma.favorites.update({
+        where: { id: firstFavorite.id },
+        data: {
+          tracks: type === 'track' ? entityToAddConnection : undefined,
+          albums: type === 'album' ? entityToAddConnection : undefined,
+          artists: type === 'artist' ? entityToAddConnection : undefined,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      )
+        throw new UnprocessableEntityException('Entity not found');
+
+      throw new Error(error);
+    }
   }
 
   async deleteItem(id: string, type: 'track' | 'album' | 'artist') {
@@ -35,7 +46,7 @@ export class FavoritesService {
 
     const entityToAddDisconnection = { disconnect: { id } };
 
-    this.prisma.favorites.update({
+    await this.prisma.favorites.update({
       where: { id: firstFavorite.id },
       data: {
         tracks: type === 'track' ? entityToAddDisconnection : undefined,

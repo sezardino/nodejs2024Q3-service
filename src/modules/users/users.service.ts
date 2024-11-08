@@ -16,6 +16,8 @@ export class UsersService {
       data: {
         login: dto.login,
         password: dto.password,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
         favorites: { create: {} },
       },
       select: {
@@ -63,7 +65,11 @@ export class UsersService {
 
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
-      data: { password: dto.newPassword, version: { increment: 1 } },
+      data: {
+        password: dto.newPassword,
+        version: { increment: 1 },
+        updatedAt: Date.now(),
+      },
       select: {
         id: true,
         login: true,

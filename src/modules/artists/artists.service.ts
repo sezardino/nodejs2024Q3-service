@@ -39,7 +39,7 @@ export class ArtistsService {
     return updatedArtist;
   }
 
-  remove(artistId: string) {
-    this.prisma.artist.delete({ where: { id: artistId } });
+  async remove(artistId: string) {
+    await this.prisma.artist.delete({ where: { id: artistId } });
   }
 }

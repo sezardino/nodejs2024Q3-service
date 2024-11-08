@@ -12,8 +12,8 @@ export class TracksService {
       data: {
         duration: dto.duration,
         name: dto.name,
-        album: { connect: { id: dto.albumId } },
-        artist: { connect: { id: dto.artistId } },
+        album: dto.albumId ? { connect: { id: dto.albumId } } : undefined,
+        artist: dto.artistId ? { connect: { id: dto.artistId } } : undefined,
       },
     });
   }
@@ -22,8 +22,10 @@ export class TracksService {
     return this.prisma.track.findMany();
   }
 
-  findOne(trackId: string, exception = NotFoundException) {
-    const track = this.prisma.track.findUnique({ where: { id: trackId } });
+  async findOne(trackId: string, exception = NotFoundException) {
+    const track = await this.prisma.track.findUnique({
+      where: { id: trackId },
+    });
 
     if (!track) throw new exception('Track not found');
 
@@ -36,13 +38,13 @@ export class TracksService {
       data: {
         duration: dto.duration,
         name: dto.name,
-        album: { connect: { id: dto.albumId } },
-        artist: { connect: { id: dto.artistId } },
+        album: dto.albumId ? { connect: { id: dto.albumId } } : undefined,
+        artist: dto.artistId ? { connect: { id: dto.artistId } } : undefined,
       },
     });
   }
 
-  remove(trackId: string) {
-    this.prisma.track.delete({ where: { id: trackId } });
+  async remove(trackId: string) {
+    await this.prisma.track.delete({ where: { id: trackId } });
   }
 }

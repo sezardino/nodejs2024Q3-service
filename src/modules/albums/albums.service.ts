@@ -12,7 +12,7 @@ export class AlbumsService {
       data: {
         name: dto.name,
         year: dto.year,
-        artist: { connect: { id: dto.artistId } },
+        artist: dto.artistId ? { connect: { id: dto.artistId } } : undefined,
       },
     });
 
@@ -33,8 +33,8 @@ export class AlbumsService {
     return album;
   }
 
-  update(albumId: string, dto: UpdateAlbumDto) {
-    const updatedAlbum = this.prisma.album.update({
+  async update(albumId: string, dto: UpdateAlbumDto) {
+    const updatedAlbum = await this.prisma.album.update({
       where: { id: albumId },
       data: {
         name: dto.name,
@@ -46,7 +46,7 @@ export class AlbumsService {
     return updatedAlbum;
   }
 
-  remove(albumId: string) {
-    this.prisma.album.delete({ where: { id: albumId } });
+  async remove(albumId: string) {
+    await this.prisma.album.delete({ where: { id: albumId } });
   }
 }
