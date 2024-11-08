@@ -2,14 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { Track } from './entities/track.entity';
 
 @Injectable()
 export class TracksService {
-  tracks: Track[] = []
-
-  constructor(private readonly prisma: PrismaService) { }
-
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateTrackDto) {
     return await this.prisma.track.create({
@@ -44,24 +40,6 @@ export class TracksService {
         artist: { connect: { id: dto.artistId } },
       }
     })
-  }
-
-  deleteAlbum(albumId: string) {
-    const updatedTracks = this.tracks.map((t) => ({
-      ...t,
-      albumId: t.albumId === albumId ? null : t.albumId,
-    }));
-
-    this.tracks = updatedTracks;
-  }
-
-  deleteArtist(artistId: string) {
-    const updatedTracks = this.tracks.map((t) => ({
-      ...t,
-      artistId: t.artistId === artistId ? null : t.artistId,
-    }));
-
-    this.tracks = updatedTracks;
   }
 
   remove(trackId: string) {

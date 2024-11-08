@@ -5,9 +5,7 @@ import { PrismaService } from 'src/common/prisma';
 
 @Injectable()
 export class FavoritesService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async get() {
     return await this.prisma.favorites.findFirst({ include: { albums: true, artists: true, tracks: true } })
