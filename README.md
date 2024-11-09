@@ -1,72 +1,84 @@
 # Home Library Service
 
+This is a RESTful API built with [NestJS](https://nestjs.com/). The project includes a Swagger API documentation, which makes it easy to understand and test the available endpoints.
+
 ## Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+Ensure you have the following installed on your system:
 
-## Downloading
+- [Node.js](https://nodejs.org/) (v14 or higher recommended)
+- [npm](https://www.npmjs.com/) (v6 or higher)
 
+## Installation
+
+Follow these steps to set up the project locally.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/sezardino/nodejs2024Q3-service
+cd nodejs2024Q3-service
 ```
-git clone {repository URL}
+
+### 2. Set correct branch
+
+```bash
+git checkout dev-part-1
 ```
 
-## Installing NPM modules
+### 3. Install Dependencies
 
-```
+```bash
 npm install
 ```
 
-## Running application
+### 4. Configure Environment Variables
 
-```
-npm start
-```
+Create a `.env` file at the root of your project (if not provided) and add any required environment variables. For example:
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+```env
+PORT=4001
 
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
+CRYPT_SALT=10
+JWT_SECRET_KEY=secret123123
+JWT_SECRET_REFRESH_KEY=secret123123
+TOKEN_EXPIRE_TIME=1h
+TOKEN_REFRESH_EXPIRE_TIME=24h
 ```
 
-To run only one of all test suites
+Update the variables as needed.
 
-```
-npm run test -- <path to suite>
-```
+### 5. Start the Application
 
-To run all test with authorization
+To start the application in development mode, run:
 
-```
-npm run test:auth
+```bash
+npm run start:dev
 ```
 
-To run only specific test suite with authorization
+The application should now be running on `http://localhost:4001`.
+
+### 6. Access Swagger API Documentation
+
+The project includes Swagger documentation, which is available at:
 
 ```
-npm run test:auth -- <path to suite>
+http://localhost:4001/api/docs
 ```
 
-### Auto-fix and format
+This documentation provides a UI for testing all available API endpoints and their parameters.
 
-```
-npm run lint
-```
+## Scripts
 
-```
-npm run format
-```
+- **`npm run start`** - Starts the application in production mode.
+- **`npm run start:dev`** - Starts the application in development mode.
+- **`npm run test`** - Runs the test suite.
+- **`npm run build`** - Builds the application.
 
-### Debugging in VSCode
+## Checklist for Setting Up the Application
 
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+1. Clone the repository.
+2. Run `npm install` to install dependencies.
+3. Configure environment variables in `.env`.
+4. Start the application with `npm run start:dev`.
+5. Access the Swagger documentation at `http://localhost:4000/api/docs`.
