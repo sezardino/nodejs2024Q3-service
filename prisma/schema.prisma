@@ -21,8 +21,8 @@ model User {
   password String
   version  Int    @default(1)
 
-  createdAt Int @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::int")) @map("created_at")
-  updatedAt Int @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::int")) @map("updated_at")
+  createdAt String @default(dbgenerated("TO_CHAR(NOW(), 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"')")) @map("created_at")
+  updatedAt String @default(dbgenerated("TO_CHAR(NOW(), 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"')")) @map("updated_at")
 
   favorites   Favorites @relation(fields: [favoritesId], references: [id])
   favoritesId String
