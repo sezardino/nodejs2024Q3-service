@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { UsersModule } from './modules/users/users.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { UsersModule } from './modules/users/users.module';
     FavoritesModule,
     AuthModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}

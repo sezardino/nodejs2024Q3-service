@@ -6,6 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
+import { JWTPayload } from 'src/types/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { SignUpDto } from './dto/signup.dto';
@@ -21,13 +22,13 @@ export class AuthService {
   async signup(dto: SignUpDto) {
     const { password, login } = dto;
 
-    const user = this.usersService.findUserForAuth(login);
+    const user = await this.usersService.findUserForAuth(login);
 
     if (user) throw new ConflictException('Conflict. Login already exists');
 
     const passwordHash = hashSync(
       password,
-      genSaltSync(this.configService.get<number>('CRYPT_SALT')),
+      genSaltSync(Number(this.configService.get<number>('CRYPT_SALT'))),
     );
 
     const newUser = await this.usersService.create({
@@ -38,9 +39,9 @@ export class AuthService {
     const token = await this.jwtService.signAsync({
       userId: newUser.id,
       login: newUser.login,
-    });
+    } as JWTPayload);
 
-    return { token };
+    return { ...newUser, accessToken: token, refreshToken: token };
   }
 
   async login(dto: LoginDto) {
@@ -57,8 +58,8 @@ export class AuthService {
     const token = await this.jwtService.signAsync({
       userId: user.id,
       login: user.login,
-    });
+    } as JWTPayload);
 
-    return { token };
+    return { accessToken: token, refreshToken: token };
   }
 }

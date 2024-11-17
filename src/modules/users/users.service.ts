@@ -9,10 +9,13 @@ import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findUserForAuth(login: string) {
-    return await this.prisma.user.findUnique({ where: { login }, select: { id: true, login: true, password: true } })
+    return await this.prisma.user.findUnique({
+      where: { login },
+      select: { id: true, login: true, password: true },
+    });
   }
 
   async create(dto: CreateUserDto) {

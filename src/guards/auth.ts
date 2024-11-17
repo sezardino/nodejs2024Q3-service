@@ -14,6 +14,8 @@ import { JWTPayload } from 'src/types/jwt';
 export const USER_IN_REQUEST = 'user';
 export const CURRENT_USER_IN_REQUEST = 'currentUser';
 
+const DOC_URL = '/doc';
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -30,6 +32,9 @@ export class AuthGuard implements CanActivate {
     if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest();
+
+    if (request.url === DOC_URL) return true;
+
     const token = this.extractTokenFromHeader(request);
 
     if (!token) throw new UnauthorizedException('Authentication Failed');

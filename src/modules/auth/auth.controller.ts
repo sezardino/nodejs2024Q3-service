@@ -9,20 +9,22 @@ import { SignUpDto } from './dto/signup.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/signup')
+  @Post('signup')
+  @Public()
   @HttpCode(StatusCodes.CREATED)
   registration(@Body() dto: SignUpDto) {
     return this.authService.signup(dto);
   }
 
-  @Post('/login')
+  @Post('login')
   @HttpCode(HttpStatus.OK)
   @Public()
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
-  @Post('/refresh')
+  @Post('refresh')
+  @Public()
   resetPasswordPost() {
     return '';
   }
