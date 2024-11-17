@@ -4,6 +4,8 @@
 
 This project is a NestJS-based application using PostgreSQL as the database and Prisma as the ORM. Docker is used to containerize the application, with separate `docker-compose` files provided for development (`docker-compose.dev.yml`) and production (`docker-compose.prod.yml`).
 
+This is a RESTful API built with [NestJS](https://nestjs.com/). The project includes a Swagger API documentation, which makes it easy to understand and test the available endpoints.
+
 ## Prerequisites
 
 - Docker installed: [Docker Installation Guide](https://docs.docker.com/get-docker/)
