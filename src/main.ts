@@ -13,13 +13,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new PrismaClientExceptionFilter());
-  await app.listen(process.env.PORT || 8080);
-  console.log(process.env.PORT);
 
+  // docs
   const filePath = path.join(__dirname, '../doc/api.yaml');
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const swaggerDocument = yaml.load(fileContents);
-
   // @ts-ignore
   SwaggerModule.setup('api/docs', app, swaggerDocument);
 

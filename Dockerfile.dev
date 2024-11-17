@@ -7,9 +7,9 @@ WORKDIR /app
 RUN npm install -g @nestjs/cli
 
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
-RUN npm install prisma @prisma/client
+RUN npm install prisma @prisma/client --legacy-peer-deps
 
 COPY . .
 
