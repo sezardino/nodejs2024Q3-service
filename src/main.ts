@@ -16,8 +16,8 @@ async function bootstrap() {
   const loggingService = app.get(LoggingService);
 
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new PrismaClientExceptionFilter());
   app.useGlobalFilters(new AllExceptionsFilter(loggingService));
+  app.useGlobalFilters(new PrismaClientExceptionFilter());
 
   // docs
   const filePath = path.join(__dirname, '../doc/api.yaml');
@@ -48,9 +48,5 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT || 4000);
   loggingService.log('NestJS application started successfully.');
-
-  setTimeout(() => {
-    throw new Error('Test uncaughtException');
-  }, 1000);
 }
 bootstrap();
