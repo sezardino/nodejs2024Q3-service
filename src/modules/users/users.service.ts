@@ -12,24 +12,32 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateUserDto) {
-    const newUser = await this.prisma.user.create({
-      data: {
-        login: dto.login,
-        password: dto.password,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        favorites: { create: {} },
-      },
-      select: {
-        id: true,
-        login: true,
-        createdAt: true,
-        updatedAt: true,
-        version: true,
-      },
-    });
+    try {
+      const { createdAt, updatedAt, ...rest } = await this.prisma.user.create({
+        data: {
+          login: dto.login,
+          password: dto.password,
+          createdAt: Date.now().toString(),
+          updatedAt: Date.now().toString(),
+          favorites: { create: {} },
+        },
+        select: {
+          id: true,
+          login: true,
+          createdAt: true,
+          updatedAt: true,
+          version: true,
+        },
+      });
 
-    return newUser;
+      return {
+        ...rest,
+        createdAt: Number(createdAt),
+        updatedAt: Number(updatedAt),
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findAll() {
@@ -50,7 +58,11 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    return user;
+    return {
+      ...user,
+      createdAt: Number(user.createdAt),
+      updatedAt: Number(user.updatedAt),
+    };
   }
 
   async updatePassword(userId: string, dto: UpdateUserPasswordDto) {
@@ -68,7 +80,7 @@ export class UsersService {
       data: {
         password: dto.newPassword,
         version: { increment: 1 },
-        updatedAt: Date.now(),
+        updatedAt: Date.now().toString(),
       },
       select: {
         id: true,
@@ -79,7 +91,11 @@ export class UsersService {
       },
     });
 
-    return updatedUser;
+    return {
+      ...updatedUser,
+      createdAt: Number(updatedUser.createdAt),
+      updatedAt: Number(updatedUser.updatedAt),
+    };
   }
 
   async remove(userId: string) {
