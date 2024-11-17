@@ -32,6 +32,7 @@ services:
       - .env
     volumes:
       - .:/app
+      - ./logs:/var/log/myapp
     networks:
       - app_dev
 
