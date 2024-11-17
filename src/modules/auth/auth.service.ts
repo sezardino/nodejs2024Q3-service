@@ -9,15 +9,31 @@ import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { JWTPayload } from 'src/types/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignUpDto } from './dto/signup.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
+    private readonly accessJwtService: JwtService,
+    private readonly refreshJwtService: JwtService,
     private readonly usersService: UsersService,
-  ) {}
+  ) {
+    this.refreshJwtService = new JwtService({
+      secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY'),
+      signOptions: {
+        expiresIn: '30d',
+      },
+    });
+  }
+
+  private async generateTokens(payload: JWTPayload) {
+    const accessToken = await this.accessJwtService.signAsync(payload);
+    const refreshToken = await this.refreshJwtService.signAsync(payload);
+
+    return { accessToken, refreshToken };
+  }
 
   async signup(dto: SignUpDto) {
     const { password, login } = dto;
@@ -36,12 +52,12 @@ export class AuthService {
       password: passwordHash,
     });
 
-    const token = await this.jwtService.signAsync({
+    const tokens = this.generateTokens({
       userId: newUser.id,
       login: newUser.login,
-    } as JWTPayload);
+    });
 
-    return { ...newUser, accessToken: token, refreshToken: token };
+    return { ...newUser, ...tokens };
   }
 
   async login(dto: LoginDto) {
@@ -55,11 +71,28 @@ export class AuthService {
     if (!isPasswordMatch)
       throw new ForbiddenException('Incorrect login or password');
 
-    const token = await this.jwtService.signAsync({
+    const tokens = this.generateTokens({
       userId: user.id,
       login: user.login,
-    } as JWTPayload);
+    });
 
-    return { accessToken: token, refreshToken: token };
+    return tokens;
+  }
+
+  async refreshToken(dto: RefreshTokenDto) {
+    try {
+      const payload = await this.refreshJwtService.verifyAsync<JWTPayload>(
+        dto.refreshToken,
+      );
+
+      return await this.generateTokens({
+        login: payload.login,
+        userId: payload.userId,
+      });
+    } catch (error) {
+      console.log(error);
+      return { error };
+      throw new ForbiddenException('Invalid or expired token');
+    }
   }
 }

@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Public } from 'src/decorators/auth';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignUpDto } from './dto/signup.dto';
 
 @Controller('auth')
@@ -17,15 +18,16 @@ export class AuthController {
   }
 
   @Post('login')
-  @HttpCode(HttpStatus.OK)
   @Public()
+  @HttpCode(HttpStatus.OK)
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
   @Post('refresh')
   @Public()
-  resetPasswordPost() {
-    return '';
+  @HttpCode(HttpStatus.OK)
+  resetPasswordPost(@Body() dto: RefreshTokenDto) {
+    return this.authService.refreshToken(dto);
   }
 }
