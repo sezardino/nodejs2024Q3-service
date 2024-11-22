@@ -34,6 +34,7 @@ services:
       - .:/app
     networks:
       - app_dev
+    # command: ['npx', 'prisma', 'migrate', 'deploy']
 
 volumes:
   postgres_data:
