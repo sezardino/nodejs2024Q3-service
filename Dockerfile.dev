@@ -4,16 +4,11 @@ RUN apk add --no-cache python3 py3-pip build-base
 
 WORKDIR /app
 
-RUN npm install -g @nestjs/cli
-
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
 
-RUN npm install prisma @prisma/client --legacy-peer-deps
+RUN npm install
 
 COPY . .
-
-RUN npx prisma generate
 
 EXPOSE 3000
 
