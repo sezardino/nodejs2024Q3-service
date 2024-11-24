@@ -26,7 +26,10 @@ In the root directory, create a `.env` file and add the required environment var
 
 ```dotenv
 # .env
-PORT=4001
+PORT=8080
+
+LOG_LEVEL=0
+LOG_FILE_MAX_SIZE=10240
 
 CRYPT_SALT=10
 JWT_SECRET_KEY=secret123123
@@ -38,8 +41,10 @@ TOKEN_REFRESH_EXPIRE_TIME=24h
 POSTGRES_USER=prisma_user
 POSTGRES_PASSWORD=prisma_password
 POSTGRES_DB=prisma_db
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
 
-DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 
 NODE_ENV=production
 ```
