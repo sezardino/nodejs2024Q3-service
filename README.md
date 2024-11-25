@@ -1,84 +1,113 @@
-# Home Library Service
+# NestJS Project with PostgreSQL and Prisma
+
+## Description
+
+This project is a NestJS-based application using PostgreSQL as the database and Prisma as the ORM. Docker is used to containerize the application, with separate `docker-compose` files provided for development (`docker-compose.dev.yml`) and production (`docker-compose.prod.yml`).
 
 This is a RESTful API built with [NestJS](https://nestjs.com/). The project includes a Swagger API documentation, which makes it easy to understand and test the available endpoints.
 
 ## Prerequisites
 
-Ensure you have the following installed on your system:
+- Docker installed: [Docker Installation Guide](https://docs.docker.com/get-docker/)
+- Docker Compose installed: [Docker Compose Installation Guide](https://docs.docker.com/compose/install/)
 
-- [Node.js](https://nodejs.org/) (v14 or higher recommended)
-- [npm](https://www.npmjs.com/) (v6 or higher)
-
-## Installation
-
-Follow these steps to set up the project locally.
+## Installation and Running the Project
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/sezardino/nodejs2024Q3-service
+git clone https://github.com/sezardino/nodejs2024Q3-service.git
 cd nodejs2024Q3-service
 ```
 
-### 2. Set correct branch
+### 2. Create an Environment File
 
-```bash
-git checkout dev-part-1
-```
+In the root directory, create a `.env` file and add the required environment variables. Example:
 
-### 3. Install Dependencies
+```dotenv
+# .env
+PORT=8080
 
-```bash
-npm install
-```
-
-### 4. Configure Environment Variables
-
-Create a `.env` file at the root of your project (if not provided) and add any required environment variables. For example:
-
-```env
-PORT=4001
+LOG_LEVEL=0
+LOG_FILE_MAX_SIZE=10240
 
 CRYPT_SALT=10
 JWT_SECRET_KEY=secret123123
 JWT_SECRET_REFRESH_KEY=secret123123
 TOKEN_EXPIRE_TIME=1h
 TOKEN_REFRESH_EXPIRE_TIME=24h
+
+
+POSTGRES_USER=prisma_user
+POSTGRES_PASSWORD=prisma_password
+POSTGRES_DB=prisma_db
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+
+NODE_ENV=production
 ```
 
-Update the variables as needed.
+### 3. Start the Project
 
-### 5. Start the Application
+#### For Development
 
-To start the application in development mode, run:
+To start in development mode, use the `docker-compose.dev.yml` file:
 
 ```bash
-npm run start:dev
+docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
-The application should now be running on `http://localhost:4001`.
+#### For Production
 
-### 6. Access Swagger API Documentation
+To start in production mode, use the `docker-compose.prod.yml` file:
 
-The project includes Swagger documentation, which is available at:
-
-```
-http://localhost:4001/api/docs
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
-This documentation provides a UI for testing all available API endpoints and their parameters.
+### 4. Verification
 
-## Scripts
+Once migrations are complete, the application should be available on port `8080`:
 
-- **`npm run start`** - Starts the application in production mode.
-- **`npm run start:dev`** - Starts the application in development mode.
-- **`npm run test`** - Runs the test suite.
-- **`npm run build`** - Builds the application.
+- URL: `http://localhost:8080`
 
-## Checklist for Setting Up the Application
+### 5 Stopping the Containers
 
-1. Clone the repository.
-2. Run `npm install` to install dependencies.
-3. Configure environment variables in `.env`.
-4. Start the application with `npm run start:dev`.
-5. Access the Swagger documentation at `http://localhost:4000/api/docs`.
+To stop and remove containers, use the command below for the respective environment.
+
+#### For Development
+
+```bash
+docker-compose -f docker-compose.dev.yml down
+```
+
+#### For Production
+
+```bash
+docker-compose -f docker-compose.prod.yml down
+```
+
+## Notes
+
+- If the database configuration changes, make sure to update the `DATABASE_URL` variable in the `.env` file.
+- You may need to adjust PostgreSQL’s external port in the `docker-compose` file to avoid conflicts.
+
+---
+
+## Summary: Project Setup Checklist
+
+To launch the project, ensure the following steps are completed:
+
+1. **Clone the repository** and navigate to the project directory.
+2. **Create a `.env` file** with the required environment variables, especially `DATABASE_URL`.
+3. **Start the Docker containers**:
+   - For development: `docker-compose -f docker-compose.dev.yml up -d --build`
+   - For production: `docker-compose -f docker-compose.prod.yml up -d --build`
+4. **Verify the application** is running at `http://localhost:8080`.
+5. **Stop containers** when done:
+   - For development: `docker-compose -f docker-compose.dev.yml down`
+   - For production: `docker-compose -f docker-compose.prod.yml down`
+
+Following these steps will ensure the project is correctly set up and ready to run.

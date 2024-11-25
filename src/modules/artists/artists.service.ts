@@ -1,58 +1,45 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AlbumsService } from '../albums/albums.service';
-import { TracksService } from '../tracks/tracks.service';
-import { MOCK_ARTISTS } from './artists.const';
+import { PrismaService } from 'src/common/prisma';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistsService {
-  private artists: Artist[] = MOCK_ARTISTS;
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor(
-    private readonly tracksService: TracksService,
-    private readonly albumService: AlbumsService,
-  ) {}
-
-  create(dto: CreateArtistDto) {
-    const newArtist = new Artist(dto);
-
-    this.artists = [...this.artists, newArtist];
-
-    return newArtist;
+  async create(dto: CreateArtistDto) {
+    return await this.prisma.artist.create({
+      data: {
+        name: dto.name,
+        grammy: dto.grammy,
+      },
+    });
   }
 
-  findAll() {
-    return this.artists;
+  async findAll() {
+    return await this.prisma.artist.findMany();
   }
 
-  findOne(artistId: string, exception = NotFoundException) {
-    const artist = this.artists.find((a) => a.id === artistId);
+  async findOne(artistId: string, exception = NotFoundException) {
+    const artist = await this.prisma.artist.findUnique({
+      where: { id: artistId },
+    });
 
     if (!artist) throw new exception('Artist not found');
 
     return artist;
   }
 
-  update(artistId: string, dto: UpdateArtistDto) {
-    const artist = this.findOne(artistId);
-
-    const updatedArtist = { ...artist, ...dto };
-
-    this.artists = [
-      ...this.artists.filter((t) => t.id !== artistId),
-      updatedArtist,
-    ];
+  async update(artistId: string, dto: UpdateArtistDto) {
+    const updatedArtist = await this.prisma.artist.update({
+      where: { id: artistId },
+      data: { name: dto.name, grammy: dto.grammy },
+    });
 
     return updatedArtist;
   }
 
-  remove(artistId: string) {
-    this.findOne(artistId);
-
-    this.artists = this.artists.filter((a) => a.id !== artistId);
-    this.tracksService.deleteArtist(artistId);
-    this.albumService.deleteArtist(artistId);
+  async remove(artistId: string) {
+    await this.prisma.artist.delete({ where: { id: artistId } });
   }
 }

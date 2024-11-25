@@ -1,67 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/common/prisma';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { Track } from './entities/track.entity';
-import { MOCK_TRACKS } from './tracks.const';
 
 @Injectable()
 export class TracksService {
-  private tracks: Track[] = MOCK_TRACKS;
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateTrackDto) {
-    const newTrack = new Track(dto);
-
-    this.tracks = [...this.tracks, newTrack];
-
-    return newTrack;
+  async create(dto: CreateTrackDto) {
+    return await this.prisma.track.create({
+      data: {
+        duration: dto.duration,
+        name: dto.name,
+        album: dto.albumId ? { connect: { id: dto.albumId } } : undefined,
+        artist: dto.artistId ? { connect: { id: dto.artistId } } : undefined,
+      },
+    });
   }
 
   findAll() {
-    return this.tracks;
+    return this.prisma.track.findMany();
   }
 
-  findOne(trackId: string, exception = NotFoundException) {
-    const track = this.tracks.find((t) => t.id === trackId);
+  async findOne(trackId: string, exception = NotFoundException) {
+    const track = await this.prisma.track.findUnique({
+      where: { id: trackId },
+    });
 
     if (!track) throw new exception('Track not found');
 
     return track;
   }
 
-  update(trackId: string, dto: UpdateTrackDto) {
-    const track = this.findOne(trackId);
-
-    const updatedTrack = { ...track, ...dto };
-
-    this.tracks = [
-      ...this.tracks.filter((t) => t.id !== trackId),
-      updatedTrack,
-    ];
-
-    return updatedTrack;
+  async update(trackId: string, dto: UpdateTrackDto) {
+    return await this.prisma.track.update({
+      where: { id: trackId },
+      data: {
+        duration: dto.duration,
+        name: dto.name,
+        album: dto.albumId ? { connect: { id: dto.albumId } } : undefined,
+        artist: dto.artistId ? { connect: { id: dto.artistId } } : undefined,
+      },
+    });
   }
 
-  deleteAlbum(albumId: string) {
-    const updatedTracks = this.tracks.map((t) => ({
-      ...t,
-      albumId: t.albumId === albumId ? null : t.albumId,
-    }));
-
-    this.tracks = updatedTracks;
-  }
-
-  deleteArtist(artistId: string) {
-    const updatedTracks = this.tracks.map((t) => ({
-      ...t,
-      artistId: t.artistId === artistId ? null : t.artistId,
-    }));
-
-    this.tracks = updatedTracks;
-  }
-
-  remove(trackId: string) {
-    this.findOne(trackId);
-
-    this.tracks = this.tracks.filter((t) => t.id !== trackId);
+  async remove(trackId: string) {
+    await this.prisma.track.delete({ where: { id: trackId } });
   }
 }

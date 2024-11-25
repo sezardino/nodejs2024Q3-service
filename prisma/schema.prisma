@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  login    String @unique
+  password String
+  version  Int    @default(1)
+
+  createdAt String @default(dbgenerated("TO_CHAR(NOW(), 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"')")) @map("created_at")
+  updatedAt String @default(dbgenerated("TO_CHAR(NOW(), 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"')")) @map("updated_at")
+
+  favorites   Favorites @relation(fields: [favoritesId], references: [id])
+  favoritesId String
+
+  @@map("users")
+}
+
+model Favorites {
+  id String @id @default(uuid())
+
+  user User[]
+
+  albums  Album[]  @relation("user-favorite-album")
+  tracks  Track[]  @relation("user-favorite-track")
+  artists Artist[] @relation("user-favorite-artist")
+}
+
+model Track {
+  id       String @id @default(uuid())
+  name     String
+  duration Int
+
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+
+  favorites Favorites[] @relation("user-favorite-track")
+
+  album   Album?  @relation(fields: [albumId], references: [id])
+  albumId String?
+
+  @@map("tracks")
+}
+
+model Album {
+  id   String @id @default(uuid())
+  name String
+  year Int
+
+  tracks Track[]
+
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+
+  favorites Favorites[] @relation("user-favorite-album")
+
+  @@map("albums")
+}
+
+model Artist {
+  id     String  @id @default(uuid())
+  name   String
+  grammy Boolean
+
+  albums Album[]
+  tracks Track[]
+
+  favorites Favorites[] @relation("user-favorite-artist")
+
+  @@map("artists")
+}
