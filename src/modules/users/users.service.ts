@@ -11,6 +11,13 @@ import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findUserForAuth(login: string) {
+    return await this.prisma.user.findUnique({
+      where: { login },
+      select: { id: true, login: true, password: true },
+    });
+  }
+
   async create(dto: CreateUserDto) {
     try {
       const { createdAt, updatedAt, ...rest } = await this.prisma.user.create({
