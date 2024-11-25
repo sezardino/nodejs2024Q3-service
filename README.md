@@ -20,19 +20,16 @@ git clone https://github.com/sezardino/nodejs2024Q3-service.git
 cd nodejs2024Q3-service
 ```
 
-### 2. Checkout to correct branch
-
-```bash
-git checkout dev-part-2
-```
-
-### 3. Create an Environment File
+### 2. Create an Environment File
 
 In the root directory, create a `.env` file and add the required environment variables. Example:
 
 ```dotenv
 # .env
-PORT=4001
+PORT=8080
+
+LOG_LEVEL=0
+LOG_FILE_MAX_SIZE=10240
 
 CRYPT_SALT=10
 JWT_SECRET_KEY=secret123123
@@ -44,13 +41,15 @@ TOKEN_REFRESH_EXPIRE_TIME=24h
 POSTGRES_USER=prisma_user
 POSTGRES_PASSWORD=prisma_password
 POSTGRES_DB=prisma_db
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
 
-DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 
 NODE_ENV=production
 ```
 
-### 4. Start the Project
+### 3. Start the Project
 
 #### For Development
 
@@ -68,37 +67,13 @@ To start in production mode, use the `docker-compose.prod.yml` file:
 docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
-### 5. Enter the Container and Run Migrations
+### 4. Verification
 
-Prisma migrations need to be applied for the database to work properly.
+Once migrations are complete, the application should be available on port `8080`:
 
-1. Enter the application container:
+- URL: `http://localhost:8080`
 
-   ```bash
-   docker exec -it app /bin/sh
-   ```
-
-   Replace `app` with your application container’s name. This is usually the name of the `app` service in the `docker-compose` file, such as `app_dev` or `app_prod`.
-
-2. Run Prisma migrations:
-
-   ```bash
-   npx prisma migrate deploy
-   ```
-
-3. (Optional) To inspect or manage the data, you can use Prisma Studio:
-
-   ```bash
-   npx prisma studio
-   ```
-
-### 6. Verification
-
-Once migrations are complete, the application should be available on port `3000`:
-
-- URL: `http://localhost:3000`
-
-### Stopping the Containers
+### 5 Stopping the Containers
 
 To stop and remove containers, use the command below for the respective environment.
 
@@ -130,12 +105,8 @@ To launch the project, ensure the following steps are completed:
 3. **Start the Docker containers**:
    - For development: `docker-compose -f docker-compose.dev.yml up -d --build`
    - For production: `docker-compose -f docker-compose.prod.yml up -d --build`
-4. **Enter the application container**:
-   - Command: `docker exec -it app /bin/sh`
-5. **Run Prisma migrations**:
-   - Command: `npx prisma migrate deploy`
-6. **Verify the application** is running at `http://localhost:4000`.
-7. **Stop containers** when done:
+4. **Verify the application** is running at `http://localhost:8080`.
+5. **Stop containers** when done:
    - For development: `docker-compose -f docker-compose.dev.yml down`
    - For production: `docker-compose -f docker-compose.prod.yml down`
 
