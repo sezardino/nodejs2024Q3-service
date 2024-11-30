@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -80,6 +81,8 @@ export class AuthService {
   }
 
   async refreshToken(dto: RefreshTokenDto) {
+    if (!dto.refreshToken) throw new UnauthorizedException();
+
     try {
       const payload = await this.refreshJwtService.verifyAsync<JWTPayload>(
         dto.refreshToken,
@@ -91,7 +94,6 @@ export class AuthService {
       });
     } catch (error) {
       console.log(error);
-      return { error };
       throw new ForbiddenException('Invalid or expired token');
     }
   }
