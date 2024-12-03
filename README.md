@@ -2,7 +2,7 @@
 
 ## Description
 
-This project is a NestJS-based application using PostgreSQL as the database and Prisma as the ORM. Docker is used to containerize the application, with separate `docker-compose` files provided for development (`docker-compose.dev.yml`) and production (`docker-compose.prod.yml`).
+This project is a NestJS-based application using PostgreSQL as the database and Prisma as the ORM. Docker is used to containerize the application.
 
 This is a RESTful API built with [NestJS](https://nestjs.com/). The project includes a Swagger API documentation, which makes it easy to understand and test the available endpoints.
 
@@ -37,7 +37,6 @@ JWT_SECRET_REFRESH_KEY=secret123123
 TOKEN_EXPIRE_TIME=1h
 TOKEN_REFRESH_EXPIRE_TIME=24h
 
-
 POSTGRES_USER=prisma_user
 POSTGRES_PASSWORD=prisma_password
 POSTGRES_DB=prisma_db
@@ -51,20 +50,10 @@ NODE_ENV=production
 
 ### 3. Start the Project
 
-#### For Development
-
-To start in development mode, use the `docker-compose.dev.yml` file:
+To start, use the `docker-compose.yml` file:
 
 ```bash
-docker-compose -f docker-compose.dev.yml up -d --build
-```
-
-#### For Production
-
-To start in production mode, use the `docker-compose.prod.yml` file:
-
-```bash
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.yml up --build
 ```
 
 ### 4. Verification
@@ -80,13 +69,7 @@ To stop and remove containers, use the command below for the respective environm
 #### For Development
 
 ```bash
-docker-compose -f docker-compose.dev.yml down
-```
-
-#### For Production
-
-```bash
-docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.yml down
 ```
 
 ## Notes
@@ -103,11 +86,9 @@ To launch the project, ensure the following steps are completed:
 1. **Clone the repository** and navigate to the project directory.
 2. **Create a `.env` file** with the required environment variables, especially `DATABASE_URL`.
 3. **Start the Docker containers**:
-   - For development: `docker-compose -f docker-compose.dev.yml up -d --build`
-   - For production: `docker-compose -f docker-compose.prod.yml up -d --build`
+   - `docker-compose -f docker-compose.yml up --build`
 4. **Verify the application** is running at `http://localhost:8080`.
 5. **Stop containers** when done:
-   - For development: `docker-compose -f docker-compose.dev.yml down`
-   - For production: `docker-compose -f docker-compose.prod.yml down`
+   - `docker-compose -f docker-compose.yml down`
 
 Following these steps will ensure the project is correctly set up and ready to run.

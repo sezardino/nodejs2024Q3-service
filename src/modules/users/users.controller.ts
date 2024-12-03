@@ -26,6 +26,7 @@ export class UsersController {
   @Get()
   @HttpCode(200)
   findAll() {
+    console.log(123);
     return this.usersService.findAll();
   }
 
